@@ -14,22 +14,32 @@ echo "Archive name : $ARCHIVE_NAME"
 echo "Archive folder : $ARCHIVE_FOLDER"
 echo "Archive full path : $ARCHIVE"
 
-
 # MongoDump uri
 OPENFOODFACTS_URI="https://static.openfoodfacts.org/data/openfoodfacts-mongodbdump.gz"
 
-# Remove eventually pre stored dump archive from archives folder
+# Ask the user if they want to remove the existing archive
 if [ -f $ARCHIVE ]; then
-    echo "Removing ${ARCHIVE_FOLDER} content"
-    rm -r $ARCHIVE_FOLDER/*
+    read -p "Do you want to remove the existing archive and recreate it? (y/n): " remove_choice
+    if [ "$remove_choice" = "y" ]; then
+        echo "Removing ${ARCHIVE_FOLDER} content"
+        rm -r $ARCHIVE_FOLDER/*
+        mkdir -p $ARCHIVE_FOLDER
+        echo "Downloading $OPENFOODFACTS_URI to $ARCHIVE_FOLDER"
+        cd $ARCHIVE_FOLDER
+        wget $OPENFOODFACTS_URI
+        wget $CHECKSUM_URI
+    else
+        echo "Skipping archive removal and download."
+        cd $ARCHIVE_FOLDER
+    fi
+else
+    # If archive does not exist, download it
+    mkdir -p $ARCHIVE_FOLDER
+    echo "Downloading $OPENFOODFACTS_URI to $ARCHIVE_FOLDER"
+    cd $ARCHIVE_FOLDER
+    wget $OPENFOODFACTS_URI
+    wget $CHECKSUM_URI
 fi
-
-# Download archive into ARCHIVE_FOLDER
-echo "Download $OPENFOODFACTS_URI to $ARCHIVE_FOLDER"
-cd $ARCHIVE_FOLDER
-wget $OPENFOODFACTS_URI
-wget $CHECKSUM_URI
-
 
 # Checksum and Unzip archive
 sha256sum -c "$CHECKSUM_FILE"
@@ -51,4 +61,3 @@ else
 fi
 
 echo "Process complete"
-

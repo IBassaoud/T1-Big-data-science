@@ -26,11 +26,29 @@ services:
       - bigdata-network
   spark:
     container_name: spark-py
-    image: apache/spark-py:latest
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    command: >
+      /opt/spark/bin/spark-submit
+      --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1
+      --conf spark.jars.ivy=/opt/spark/.ivy2
+      --conf spark.local.dir=/tmp/spark-events
+      /var/data/nutritional_index_classification.py
     volumes:
       - ./spark/datas:/var/data
+      - spark_ivy_cache:/opt/spark/.ivy2
+    env_file: .env
+    environment:
+      - SPARK_MASTER=local[*]
+    depends_on:
+      - off-db
     networks:
       - bigdata-network
+
+volumes:
+  spark_ivy_cache:
+
 networks:
   bigdata-network: 
     driver: bridge
