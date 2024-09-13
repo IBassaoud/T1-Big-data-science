@@ -165,6 +165,19 @@ if __name__ == "__main__":
 - **Calcul de l'Indice Nutritionnel** : Le script calcule avec succès un indice nutritionnel et le normalise entre 1 et 5.
 - **Sortie des Données** : Les données traitées sont enregistrées dans la collection `processed_products` dans MongoDB.
 
+### Exemple de sortie
+```textfile
+2024-09-13 14:29:14 +-----------------+------------------+--------------+
+2024-09-13 14:29:14 |              _id|nutrition_grade_fr|nutrient_score|
+2024-09-13 14:29:14 +-----------------+------------------+--------------+
+2024-09-13 14:29:14 |               00|                 c|             3|
+2024-09-13 14:29:14 |            00000|           unknown|             0|
+2024-09-13 14:29:14 |           000000|                 b|             5|
+2024-09-13 14:29:14 |  000000000000000|           unknown|             0|
+2024-09-13 14:29:14 |00000000000000225|           unknown|             0|
+2024-09-13 14:29:14 +-----------------+------------------+--------------+
+```
+
 ## Dépôt Git
 
 - **URL du Dépôt** : [Classification Nutritionnelle OpenFoodFacts](https://github.com/IBassaoud/T1-Big-data-science)
