@@ -11,6 +11,7 @@ services:
       - ./openfoodfacts/db:/openfoodfacts
     networks:
       - bigdata-network
+      
   uptake: 
     container_name: uptake
     restart: unless-stopped
@@ -24,8 +25,13 @@ services:
       - 27019:27017
     networks:
       - bigdata-network
+
   spark:
     container_name: spark-py
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+      - "4040:4040"
     build:
       context: ./spark
       dockerfile: Dockerfile
@@ -34,13 +40,17 @@ services:
       --packages org.mongodb.spark:mongo-spark-connector_2.12:3.0.1
       --conf spark.jars.ivy=/opt/spark/.ivy2
       --conf spark.local.dir=/tmp/spark-events
-      /var/data/nutritional_index_classification.py
+      --conf spark.ui.port=4040
+      --conf spark.driver.extraJavaOptions=-Duser.timezone=UTC
+      --conf spark.executor.extraJavaOptions=-Duser.timezone=UTC
+      /var/data/nutritional_index_classification.py && tail -f /dev/null
     volumes:
       - ./spark/datas:/var/data
       - spark_ivy_cache:/opt/spark/.ivy2
     env_file: .env
     environment:
       - SPARK_MASTER=local[*]
+      - SPARK_DRIVER_HOST=spark-py
     depends_on:
       - off-db
     networks:

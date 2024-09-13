@@ -1,8 +1,11 @@
-FROM apache/spark-py:latest
+FROM apache/spark-py:v3.2.4
 
 USER root
 
-RUN pip install pymongo
+RUN pip install pymongo matplotlib pandas
+
+# Install netcat for the health check in the entrypoint script
+RUN apt-get update && apt-get install -y netcat && rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories and set permissions
 RUN mkdir -p /opt/spark/.ivy2 /tmp/spark-events /var/data && \
